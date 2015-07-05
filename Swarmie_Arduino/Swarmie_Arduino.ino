@@ -76,8 +76,6 @@ void setup()
 
 void loop() {
   update();
-  Serial.println(txBuffer);
-  Serial.println("LOOP");
   
   if (Serial.available()) {
     char c = Serial.read();
