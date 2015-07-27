@@ -25,8 +25,8 @@ void Movement::forward(byte leftSpeed, byte rightSpeed) {
     digitalWrite(_leftDirectionA, LOW);
     digitalWrite(_leftDirectionB, HIGH);
     analogWrite(_leftSpeedPin, leftSpeed);
-    digitalWrite(_rightDirectionA, LOW);
-    digitalWrite(_rightDirectionB, HIGH);
+    digitalWrite(_rightDirectionA, HIGH);
+    digitalWrite(_rightDirectionB, LOW);
     analogWrite(_rightSpeedPin, rightSpeed);
 }
 
@@ -37,8 +37,8 @@ void Movement::backward(byte leftSpeed, byte rightSpeed) {
     digitalWrite(_leftDirectionA, HIGH);
     digitalWrite(_leftDirectionB, LOW);
     analogWrite(_leftSpeedPin, leftSpeed);
-    digitalWrite(_rightDirectionA, HIGH);
-    digitalWrite(_rightDirectionB, LOW);
+    digitalWrite(_rightDirectionA, LOW);
+    digitalWrite(_rightDirectionB, HIGH);
     analogWrite(_rightSpeedPin, rightSpeed);
 }
 
@@ -49,8 +49,8 @@ void Movement::rotateRight(byte speed) {
     digitalWrite(_leftDirectionA, LOW);
     digitalWrite(_leftDirectionB, HIGH);
     analogWrite(_leftSpeedPin, speed);
-    digitalWrite(_rightDirectionA, HIGH);
-    digitalWrite(_rightDirectionB, LOW);
+    digitalWrite(_rightDirectionA, LOW);
+    digitalWrite(_rightDirectionB, HIGH);
     analogWrite(_rightSpeedPin, speed);
 }
 
@@ -61,8 +61,8 @@ void Movement::rotateLeft(byte speed) {
     digitalWrite(_leftDirectionA, HIGH);
     digitalWrite(_leftDirectionB, LOW);
     analogWrite(_leftSpeedPin, speed);
-    digitalWrite(_rightDirectionA, LOW);
-    digitalWrite(_rightDirectionB, HIGH);
+    digitalWrite(_rightDirectionA, HIGH);
+    digitalWrite(_rightDirectionB, LOW);
     analogWrite(_rightSpeedPin, speed);
 }
 
