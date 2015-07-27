@@ -61,8 +61,8 @@ void Movement::rotateLeft(byte speed) {
     digitalWrite(_leftDirectionA, HIGH);
     digitalWrite(_leftDirectionB, LOW);
     analogWrite(_leftSpeedPin, speed);
-    digitalWrite(_rightDirectionA, HIGH);
-    digitalWrite(_rightDirectionB, LOW);
+    digitalWrite(_rightDirectionA, LOW);
+    digitalWrite(_rightDirectionB, HIGH);
     analogWrite(_rightSpeedPin, speed);
 }
 
