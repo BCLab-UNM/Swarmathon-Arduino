@@ -31,7 +31,7 @@ String txBuffer;
 
 //Ultrasound (Ping))))
 byte leftSignal = 4;
-byte middleSignal = 5;
+byte centerSignal = 5;
 byte rightSignal = 6;
 
 
@@ -44,7 +44,7 @@ LSM303 magnetometer_accelerometer;
 LPS pressure;
 Movement move = Movement(rightSpeedPin, rightDirectionA, rightDirectionB, leftSpeedPin, leftDirectionA, leftDirectionB);
 Ultrasound leftUS = Ultrasound(leftSignal);
-Ultrasound middleUS = Ultrasound(middleSignal);
+Ultrasound centerUS = Ultrasound(centerSignal);
 Ultrasound rightUS = Ultrasound(rightSignal);
 
 
@@ -139,6 +139,6 @@ void update() {
              String(gyroscope.g.y) + "," +
              String(gyroscope.g.z) + "," +
              String(leftUS.distance()) + "," +
-             String(middleUS.distance()) + "," +
+             String(centerUS.distance()) + "," +
              String(rightUS.distance());
 }
