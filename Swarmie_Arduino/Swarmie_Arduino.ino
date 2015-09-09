@@ -75,8 +75,6 @@ void setup()
 /////////////////
 
 void loop() {
-  update();
-  
   if (Serial.available()) {
     char c = Serial.read();
     if (c == ',' || c == '\n') {
@@ -117,6 +115,7 @@ void parse() {
     move.stop();
   }
   else if (rxBuffer == "d") {
+    update();
     Serial.println(txBuffer);
   }
 }
