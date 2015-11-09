@@ -18,12 +18,12 @@
 ////////////////
 
 //Movement (VNH5019 Motor Driver Carrier)
-byte rightDirectionA = 8; //"clockwise" input
-byte rightDirectionB = 9; //"counterclockwise" input
+byte rightDirectionA = A5; //"clockwise" input
+byte rightDirectionB = A4; //"counterclockwise" input
 byte rightSpeedPin = 10; //PWM input
-byte leftDirectionA = 11; //"clockwise" input
-byte leftDirectionB = 12; //"counterclockwise" input
-byte leftSpeedPin = 13; //PWM input
+byte leftDirectionA = A3; //"clockwise" input
+byte leftDirectionB = A2; //"counterclockwise" input
+byte leftSpeedPin = 11; //PWM input
 
 //Serial (USB <--> Intel NUC)
 String rxBuffer;
