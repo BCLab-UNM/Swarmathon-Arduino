@@ -63,6 +63,8 @@ void setup()
   gyroscope.enableDefault();
   magnetometer_accelerometer.init();
   magnetometer_accelerometer.enableDefault();
+  magnetometer_accelerometer.m_min = (LSM303::vector<int16_t>){ -2801, -2903, -2529};
+  magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>){ +2120, +2175, +1831};
   pressure.init();
   pressure.enableDefault();
 
@@ -130,13 +132,35 @@ void update() {
   gyroscope.read();
   magnetometer_accelerometer.read();
 
-  txBuffer = String(magnetometer_accelerometer.heading()) + "," +
-             String(magnetometer_accelerometer.a.x) + "," +
-             String(magnetometer_accelerometer.a.y) + "," +
-             String(magnetometer_accelerometer.a.z) + "," +
-             String(gyroscope.g.x) + "," +
-             String(gyroscope.g.y) + "," +
-             String(gyroscope.g.z) + "," +
+  //Collect updated values
+  LSM303::vector<int16_t> acc = magnetometer_accelerometer.a;
+  L3G::vector<int16_t> gyro = gyroscope.g;
+  LSM303::vector<int16_t> mag = magnetometer_accelerometer.m;
+
+  //Convert accelerometer digits to milligravities, then to gravities, and finally to meters per second squared
+  LSM303::vector<float> linear_acceleration = {acc.y*0.061/1000*9.81, -acc.x*0.061/1000*9.81, acc.z*0.061/1000*9.81};
+
+  //Convert gyroscope digits to millidegrees per second, then to degrees per second, and finally to radians per second
+  L3G::vector<float> angular_velocity = {gyro.y*8.75/1000*(PI/180), -gyro.x*8.75/1000*(PI/180), gyro.z*8.75/1000*(PI/180)};
+
+  //Combine normalized magnetometer and accelerometer digits to produce Euler angles, i.e. pitch, roll, and yaw
+  LSM303::vector<float> orientation = {(float)mag.x, (float)mag.y, (float)mag.z};
+  LSM303::vector_normalize(&orientation);
+  float roll = atan2(linear_acceleration.y, sqrt(pow(linear_acceleration.x,2) + pow(linear_acceleration.z,2)));
+  float pitch = -atan2(linear_acceleration.x, sqrt(pow(linear_acceleration.y,2) + pow(linear_acceleration.z,2)));
+  float yaw = atan2(-orientation.y*cos(roll) + orientation.z*sin(roll), orientation.x*cos(pitch) + orientation.y*sin(pitch)*sin(roll) + orientation.z*sin(pitch)*cos(roll));
+  orientation = {roll, pitch, yaw};
+
+  //Append data to buffer
+  txBuffer = String(linear_acceleration.x) + "," +
+             String(linear_acceleration.y) + "," +
+             String(linear_acceleration.z) + "," +
+             String(angular_velocity.x) + "," +
+             String(angular_velocity.y) + "," +
+             String(angular_velocity.z) + "," +
+             String(orientation.x) + "," +
+             String(orientation.y) + "," +
+             String(orientation.z) + "," +
              String(leftUS.distance()) + "," +
              String(centerUS.distance()) + "," +
              String(rightUS.distance());
