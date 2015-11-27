@@ -11,10 +11,12 @@ public:
     //Functions
     void update();
     
+    //Variables
+    float x,y;
+
 private:
     //Variables
     float _wheelBase, _wheelDiameter, _cpr;
-    float x,y;
 };
 
 #endif
