@@ -10,6 +10,7 @@
 #include <LPS.h>
 #include <LSM303.h>
 #include <Movement.h>
+#include <Odometry.h>
 #include <Ultrasound.h>
 
 
@@ -24,6 +25,15 @@ byte rightSpeedPin = 10; //PWM input
 byte leftDirectionA = A3; //"clockwise" input
 byte leftDirectionB = A2; //"counterclockwise" input
 byte leftSpeedPin = 11; //PWM input
+
+//Odometry (64 CPR Encoder)
+byte rightEncoderA = 0;
+byte rightEncoderB = 1;
+byte leftEncoderA = 7;
+byte leftEncoderB = 8;
+float wheelBase = 27.8; //distance between left and right wheels (in cm)
+float wheelDiameter = 12.2; //diameter of wheel (in cm)
+int cpr = 64; //"cycles per revolution" -- number of encoder increments per one wheel revolution
 
 //Serial (USB <--> Intel NUC)
 String rxBuffer;
@@ -43,6 +53,7 @@ L3G gyroscope;
 LSM303 magnetometer_accelerometer;
 LPS pressure;
 Movement move = Movement(rightSpeedPin, rightDirectionA, rightDirectionB, leftSpeedPin, leftDirectionA, leftDirectionB);
+Odometry odom = Odometry(rightEncoderA, rightEncoderB, leftEncoderA, leftEncoderB, wheelBase, wheelDiameter, cpr);
 Ultrasound leftUS = Ultrasound(leftSignal);
 Ultrasound centerUS = Ultrasound(centerSignal);
 Ultrasound rightUS = Ultrasound(rightSignal);
@@ -131,6 +142,7 @@ void update() {
   //Update current sensor values
   gyroscope.read();
   magnetometer_accelerometer.read();
+  odom.update();
 
   //Collect updated values
   LSM303::vector<int16_t> acc = magnetometer_accelerometer.a;
@@ -161,6 +173,8 @@ void update() {
              String(orientation.x) + "," +
              String(orientation.y) + "," +
              String(orientation.z) + "," +
+             String(odom.x) + "," +
+             String(odom.y) + "," +
              String(leftUS.distance()) + "," +
              String(centerUS.distance()) + "," +
              String(rightUS.distance());
