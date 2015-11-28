@@ -16,7 +16,8 @@ public:
 
 private:
     //Variables
-    float _wheelBase, _wheelDiameter, _cpr;
+    float _wheelBase, _wheelDiameter
+    int _cpr;
 };
 
 #endif

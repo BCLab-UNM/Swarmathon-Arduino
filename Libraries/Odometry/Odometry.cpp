@@ -1,45 +1,38 @@
 #include <Odometry.h>
 
 //Global Functions
-void rightEncoderARise();
-void rightEncoderAFall();
-void rightEncoderBRise();
-void rightEncoderBFall();
-void leftEncoderARise();
-void leftEncoderAFall();
-void leftEncoderBRise();
-void leftEncoderBFall();
+void rightEncoderAChange();
+void rightEncoderBChange();
+void leftEncoderAChange();
+void setupPinChangeInterrupt(byte pin);
 
 //Global Variables
-bool rightEncoderAStatus;
-bool rightEncoderBStatus;
-bool leftEncoderAStatus;
-bool leftEncoderBStatus;
 int rightEncoderCounter;
 int leftEncoderCounter;
+byte _rightEncoderAPin;
+byte _rightEncoderBPin;
+byte _leftEncoderAPin;
+byte _leftEncoderBPin;
 
 /**
  *	Constructor arg are pins for channels A and B on right and left encoders
  **/
 Odometry::Odometry(byte rightEncoderAPin, byte rightEncoderBPin, byte leftEncoderAPin, byte leftEncoderBPin, float wheelBase, float wheelDiameter, int cpr) {
-    pinMode(rightEncoderAPin, OUTPUT);
-    pinMode(rightEncoderBPin, OUTPUT);
-    pinMode(leftEncoderAPin, OUTPUT);
-    pinMode(leftEncoderBPin, OUTPUT);
-    rightEncoderAStatus = false;
-    rightEncoderBStatus = false;
-    leftEncoderAStatus = false;
-    leftEncoderBStatus = false;
+    pinMode(rightEncoderAPin, INPUT);
+    pinMode(rightEncoderBPin, INPUT);
+    pinMode(leftEncoderAPin, INPUT);
+    pinMode(leftEncoderBPin, INPUT);
+    digitalWrite(leftEncoderBPin, HIGH);
     rightEncoderCounter = 0.;
     leftEncoderCounter = 0.;
-    attachInterrupt(digitalPinToInterrupt(rightEncoderAPin), rightEncoderARise, RISING);
-    attachInterrupt(digitalPinToInterrupt(rightEncoderAPin), rightEncoderAFall, FALLING);
-    attachInterrupt(digitalPinToInterrupt(rightEncoderBPin), rightEncoderBRise, RISING);
-    attachInterrupt(digitalPinToInterrupt(rightEncoderBPin), rightEncoderBFall, FALLING);
-    attachInterrupt(digitalPinToInterrupt(leftEncoderAPin), leftEncoderARise, RISING);
-    attachInterrupt(digitalPinToInterrupt(leftEncoderAPin), leftEncoderAFall, FALLING);
-    attachInterrupt(digitalPinToInterrupt(leftEncoderBPin), leftEncoderBRise, RISING);
-    attachInterrupt(digitalPinToInterrupt(leftEncoderBPin), leftEncoderBFall, FALLING);
+    attachInterrupt(digitalPinToInterrupt(rightEncoderAPin), rightEncoderAChange, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(rightEncoderBPin), rightEncoderBChange, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(leftEncoderAPin), leftEncoderAChange, CHANGE);
+    setupPinChangeInterrupt(leftEncoderBPin);
+    _rightEncoderAPin = rightEncoderAPin;
+    _rightEncoderBPin = rightEncoderBPin;
+    _leftEncoderAPin = leftEncoderAPin;
+    _leftEncoderBPin = leftEncoderBPin;
     _wheelBase = wheelBase;
     _wheelDiameter = wheelDiameter;
     _cpr = cpr;
@@ -47,11 +40,11 @@ Odometry::Odometry(byte rightEncoderAPin, byte rightEncoderBPin, byte leftEncode
 
 void Odometry::update() {
     //Calculate linear distance that each wheel has traveled
-    float rightWheelDistance = rightEncoderCounter / _cpr * _wheelDiameter * PI;
-    float leftWheelDistance = leftWheelDistance / _cpr * _wheelDiameter * PI;
+    float rightWheelDistance = rightEncoderCounter / (_cpr * _wheelDiameter * PI);
+    float leftWheelDistance = leftEncoderCounter / (_cpr * _wheelDiameter * PI);
     
     //Calculate angle that robot has turned
-    float theta = (rightWheelDistance - leftWheelDistance) / _wheelBase;
+    float theta = (leftWheelDistance - rightWheelDistance) / _wheelBase;
     
     //Decompose linear distance into its component values
     float meanWheelDistance = (rightWheelDistance + leftWheelDistance) / 2;
@@ -63,8 +56,10 @@ void Odometry::update() {
     leftEncoderCounter = 0;
 }
 
-void rightEncoderARise() {
-    if (rightEncoderBStatus == true) {
+void rightEncoderAChange() {
+    bool rightEncoderAStatus = digitalRead(_rightEncoderAPin);
+    bool rightEncoderBStatus = digitalRead(_rightEncoderBPin);
+    if (((rightEncoderAStatus == HIGH) && (rightEncoderBStatus == LOW)) || ((rightEncoderAStatus == LOW) && (rightEncoderBStatus == HIGH))) {
         rightEncoderCounter++;
     }
     else {
@@ -72,8 +67,10 @@ void rightEncoderARise() {
     }
 }
 
-void rightEncoderAFall() {
-    if (rightEncoderBStatus == false) {
+void rightEncoderBChange() {
+    bool rightEncoderAStatus = digitalRead(_rightEncoderAPin);
+    bool rightEncoderBStatus = digitalRead(_rightEncoderBPin);
+    if (((rightEncoderAStatus == HIGH) && (rightEncoderBStatus == HIGH)) || ((rightEncoderAStatus == LOW) && (rightEncoderBStatus == LOW))) {
         rightEncoderCounter++;
     }
     else {
@@ -81,26 +78,10 @@ void rightEncoderAFall() {
     }
 }
 
-void rightEncoderBRise() {
-    if (rightEncoderAStatus == false) {
-        rightEncoderCounter++;
-    }
-    else {
-        rightEncoderCounter--;
-    }
-}
-
-void rightEncoderBFall() {
-    if (rightEncoderAStatus == true) {
-        rightEncoderCounter++;
-    }
-    else {
-        rightEncoderCounter--;
-    }
-}
-
-void leftEncoderARise() {
-    if (leftEncoderBStatus == false) {
+void leftEncoderAChange() {
+    bool leftEncoderAStatus = digitalRead(_leftEncoderAPin);
+    bool leftEncoderBStatus = digitalRead(_leftEncoderBPin);
+    if (((leftEncoderAStatus == HIGH) && (leftEncoderBStatus == HIGH)) || ((leftEncoderAStatus == LOW) && (leftEncoderBStatus == LOW))) {
         leftEncoderCounter++;
     }
     else {
@@ -108,8 +89,10 @@ void leftEncoderARise() {
     }
 }
 
-void leftEncoderAFall() {
-    if (leftEncoderBStatus == true) {
+ISR (PCINT0_vect) {
+    bool leftEncoderAStatus = digitalRead(_leftEncoderAPin);
+    bool leftEncoderBStatus = digitalRead(_leftEncoderBPin);
+    if (((leftEncoderAStatus == HIGH) && (leftEncoderBStatus == LOW)) || ((leftEncoderAStatus == LOW) && (leftEncoderBStatus == HIGH))) {
         leftEncoderCounter++;
     }
     else {
@@ -117,20 +100,8 @@ void leftEncoderAFall() {
     }
 }
 
-void leftEncoderBRise() {
-    if (leftEncoderAStatus == true) {
-        leftEncoderCounter++;
-    }
-    else {
-        leftEncoderCounter--;
-    }
-}
-
-void leftEncoderBFall() {
-    if (leftEncoderAStatus = false) {
-        leftEncoderCounter++;
-    }
-    else {
-        leftEncoderCounter--;
-    }
+void setupPinChangeInterrupt(byte pin) {
+    *digitalPinToPCMSK(pin) |= bit (digitalPinToPCMSKbit(pin));  // enable pin
+    PCIFR  |= bit (digitalPinToPCICRbit(pin)); // clear any outstanding interrupt
+    PCICR  |= bit (digitalPinToPCICRbit(pin)); // enable interrupt for the group
 }
