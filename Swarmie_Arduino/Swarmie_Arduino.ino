@@ -26,14 +26,14 @@ byte leftDirectionA = A3; //"clockwise" input
 byte leftDirectionB = A2; //"counterclockwise" input
 byte leftSpeedPin = 11; //PWM input
 
-//Odometry (64 CPR Encoder)
+//Odometry (8400 CPR Encoder)
 byte rightEncoderA = 0;
 byte rightEncoderB = 1;
 byte leftEncoderA = 7;
 byte leftEncoderB = 8;
 float wheelBase = 27.8; //distance between left and right wheels (in cm)
 float wheelDiameter = 12.2; //diameter of wheel (in cm)
-int cpr = 64; //"cycles per revolution" -- number of encoder increments per one wheel revolution
+int cpr = 8400; //"cycles per revolution" -- number of encoder increments per one wheel revolution
 
 //Serial (USB <--> Intel NUC)
 String rxBuffer;
