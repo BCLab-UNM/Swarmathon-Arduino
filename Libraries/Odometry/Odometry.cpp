@@ -36,6 +36,8 @@ Odometry::Odometry(byte rightEncoderAPin, byte rightEncoderBPin, byte leftEncode
     _wheelBase = wheelBase;
     _wheelDiameter = wheelDiameter;
     _cpr = cpr;
+    
+    clock = millis();
 }
 
 void Odometry::update() {
@@ -44,16 +46,24 @@ void Odometry::update() {
     float leftWheelDistance = ((float)leftEncoderCounter / _cpr) * _wheelDiameter * PI;
     
     //Calculate angle that robot has turned
-    float theta = (leftWheelDistance - rightWheelDistance) / _wheelBase;
+    theta = (rightWheelDistance - leftWheelDistance) / _wheelBase;
+    //Calculate angular velocity
+    vtheta = theta / (millis() - clock) * 1000;
     
     //Decompose linear distance into its component values
     float meanWheelDistance = (rightWheelDistance + leftWheelDistance) / 2;
-    x = meanWheelDistance * sin(theta);
-    y = meanWheelDistance * cos(theta);
+    x = meanWheelDistance * cos(theta);
+    y = meanWheelDistance * sin(theta);
+    //Calculate linear velocity
+    vx = x / (millis() - clock) * 1000;
+    vy = y / (millis() - clock) * 1000;
     
     //Reset counters
     rightEncoderCounter = 0;
     leftEncoderCounter = 0;
+    
+    //Reset clock
+    clock = millis();
 }
 
 void rightEncoderAChange() {
