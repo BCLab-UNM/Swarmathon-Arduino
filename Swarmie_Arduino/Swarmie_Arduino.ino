@@ -175,6 +175,10 @@ void update() {
              String(orientation.z) + "," +
              String(odom.x) + "," +
              String(odom.y) + "," +
+             String(odom.theta) + "," +
+             String(odom.vx) + "," +
+             String(odom.vy) + "," +
+             String(odom.vtheta) + "," +
              String(leftUS.distance()) + "," +
              String(centerUS.distance()) + "," +
              String(rightUS.distance());
