@@ -40,9 +40,9 @@ String rxBuffer;
 String txBuffer;
 
 //Ultrasound (Ping))))
-byte leftSignal = 4;
+byte rightSignal = 4;
 byte centerSignal = 5;
-byte rightSignal = 6;
+byte leftSignal = 6;
 
 
 ////////////////////////////
