@@ -74,8 +74,8 @@ void setup()
   gyroscope.enableDefault();
   magnetometer_accelerometer.init();
   magnetometer_accelerometer.enableDefault();
-  magnetometer_accelerometer.m_min = (LSM303::vector<int16_t>){ -2801, -2903, -2529};
-  magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>){ +2120, +2175, +1831};
+  magnetometer_accelerometer.m_min = (LSM303::vector<int16_t>){ -2523, -2802, -2688};
+  magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>){ +2710, +1151, +1549};
   pressure.init();
   pressure.enableDefault();
 
@@ -157,6 +157,9 @@ void update() {
 
   //Combine normalized magnetometer and accelerometer digits to produce Euler angles, i.e. pitch, roll, and yaw
   LSM303::vector<float> orientation = {(float)mag.x, (float)mag.y, (float)mag.z};
+  orientation.x -= (magnetometer_accelerometer.m_min.x + magnetometer_accelerometer.m_max.x) / 2;
+  orientation.y -= (magnetometer_accelerometer.m_min.y + magnetometer_accelerometer.m_max.y) / 2;
+  orientation.z -= (magnetometer_accelerometer.m_min.z + magnetometer_accelerometer.m_max.z) / 2;
   LSM303::vector_normalize(&orientation);
   float roll = atan2(linear_acceleration.y, sqrt(pow(linear_acceleration.x,2) + pow(linear_acceleration.z,2)));
   float pitch = -atan2(linear_acceleration.x, sqrt(pow(linear_acceleration.y,2) + pow(linear_acceleration.z,2)));
