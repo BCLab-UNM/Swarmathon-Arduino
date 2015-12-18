@@ -19,18 +19,18 @@
 ////////////////
 
 //Movement (VNH5019 Motor Driver Carrier)
-byte rightDirectionA = A5; //"clockwise" input
-byte rightDirectionB = A4; //"counterclockwise" input
-byte rightSpeedPin = 10; //PWM input
-byte leftDirectionA = A3; //"clockwise" input
-byte leftDirectionB = A2; //"counterclockwise" input
-byte leftSpeedPin = 11; //PWM input
+byte rightDirectionA = A3; //"clockwise" input
+byte rightDirectionB = A2; //"counterclockwise" input
+byte rightSpeedPin = 11; //PWM input
+byte leftDirectionA = A5; //"clockwise" input
+byte leftDirectionB = A4; //"counterclockwise" input
+byte leftSpeedPin = 10; //PWM input
 
 //Odometry (8400 CPR Encoder)
-byte rightEncoderA = 0;
-byte rightEncoderB = 1;
-byte leftEncoderA = 7;
-byte leftEncoderB = 8;
+byte rightEncoderA = 7;
+byte rightEncoderB = 8;
+byte leftEncoderA = 0;
+byte leftEncoderB = 1;
 float wheelBase = 27.8; //distance between left and right wheels (in cm)
 float wheelDiameter = 12.2; //diameter of wheel (in cm)
 int cpr = 8400; //"cycles per revolution" -- number of encoder increments per one wheel revolution
