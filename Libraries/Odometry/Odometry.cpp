@@ -2,9 +2,9 @@
 
 //Global Functions
 void rightEncoderAChange();
-void rightEncoderBChange();
-void leftEncoderAChange();
 void setupPinChangeInterrupt(byte pin);
+void leftEncoderAChange();
+void leftEncoderBChange();
 
 //Global Variables
 int rightEncoderCounter;
@@ -26,9 +26,9 @@ Odometry::Odometry(byte rightEncoderAPin, byte rightEncoderBPin, byte leftEncode
     rightEncoderCounter = 0.;
     leftEncoderCounter = 0.;
     attachInterrupt(digitalPinToInterrupt(rightEncoderAPin), rightEncoderAChange, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(rightEncoderBPin), rightEncoderBChange, CHANGE);
+    setupPinChangeInterrupt(rightEncoderBPin);
     attachInterrupt(digitalPinToInterrupt(leftEncoderAPin), leftEncoderAChange, CHANGE);
-    setupPinChangeInterrupt(leftEncoderBPin);
+    attachInterrupt(digitalPinToInterrupt(leftEncoderBPin), leftEncoderBChange, CHANGE);
     _rightEncoderAPin = rightEncoderAPin;
     _rightEncoderBPin = rightEncoderBPin;
     _leftEncoderAPin = leftEncoderAPin;
@@ -80,7 +80,7 @@ void rightEncoderAChange() {
     }
 }
 
-void rightEncoderBChange() {
+ISR (PCINT0_vect) {
     bool rightEncoderAStatus = digitalRead(_rightEncoderAPin);
     bool rightEncoderBStatus = digitalRead(_rightEncoderBPin);
     if (((rightEncoderAStatus == HIGH) && (rightEncoderBStatus == HIGH)) || ((rightEncoderAStatus == LOW) && (rightEncoderBStatus == LOW))) {
@@ -102,7 +102,7 @@ void leftEncoderAChange() {
     }
 }
 
-ISR (PCINT0_vect) {
+void leftEncoderBChange() {
     bool leftEncoderAStatus = digitalRead(_leftEncoderAPin);
     bool leftEncoderBStatus = digitalRead(_leftEncoderBPin);
     if (((leftEncoderAStatus == HIGH) && (leftEncoderBStatus == LOW)) || ((leftEncoderAStatus == LOW) && (leftEncoderBStatus == HIGH))) {
