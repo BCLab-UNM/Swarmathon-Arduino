@@ -25,7 +25,7 @@ byte rightSpeedPin = 11; //PWM input
 byte leftDirectionA = A5; //"clockwise" input
 byte leftDirectionB = A4; //"counterclockwise" input
 byte leftSpeedPin = 10; //PWM input
-bool turning = false;
+bool turning = false; //disables encoders when rotating
 
 //Odometry (8400 CPR Encoder)
 byte rightEncoderA = 7;
@@ -39,6 +39,8 @@ int cpr = 8400; //"cycles per revolution" -- number of encoder increments per on
 //Serial (USB <--> Intel NUC)
 String rxBuffer;
 String txBuffer;
+unsigned long watchdogTimer = 1000; //fail-safe in case of communication link failure (in ms)
+unsigned long lastCommTime = 0; //time of last communication from NUC (in ms)
 
 //Ultrasound (Ping))))
 byte leftSignal = 4;
@@ -94,10 +96,14 @@ void loop() {
     if (c == ',' || c == '\n') {
       parse();
       rxBuffer = "";
+      lastCommTime = millis();
     }
     else if (c > 0) {
       rxBuffer += c;
     }
+  }
+  if (millis() - lastCommTime > watchdogTimer) {
+    move.stop();
   }
 }
 
