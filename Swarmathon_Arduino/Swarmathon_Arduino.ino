@@ -3,6 +3,7 @@
 //////////////////////////
 
 //Built-in Arduino libraries
+#include <Servo.h>
 #include <Wire.h>
 
 //Custom libraries located in Swarmathon-Arduino repo
@@ -17,6 +18,10 @@
 ////////////////
 ////Settings////
 ////////////////
+
+//Gripper (HS-485HB Servo)
+byte fingersPin = 9;
+byte wristPin = 12;
 
 //Movement (VNH5019 Motor Driver Carrier)
 byte rightDirectionA = A3; //"clockwise" input
@@ -57,6 +62,8 @@ LSM303 magnetometer_accelerometer;
 LPS pressure;
 Movement move = Movement(rightSpeedPin, rightDirectionA, rightDirectionB, leftSpeedPin, leftDirectionA, leftDirectionB);
 Odometry odom = Odometry(rightEncoderA, rightEncoderB, leftEncoderA, leftEncoderB, wheelBase, wheelDiameter, cpr);
+Servo fingers;
+Servo wrist;
 Ultrasound leftUS = Ultrasound(leftSignal);
 Ultrasound centerUS = Ultrasound(centerSignal);
 Ultrasound rightUS = Ultrasound(rightSignal);
@@ -81,6 +88,11 @@ void setup()
   magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>){ +2710, +1151, +1549};
   pressure.init();
   pressure.enableDefault();
+
+  fingers.attach(9,647,1472);
+  fingers.write(0);
+  wrist.attach(12,750,2400);
+  wrist.write(0);
 
   rxBuffer = "";
 }
@@ -139,6 +151,14 @@ void parse() {
   else if (rxBuffer == "d") {
     update();
     Serial.println(txBuffer);
+  }
+  else if (rxBuffer == "f") {
+    int angle = Serial.parseInt();
+    fingers.write(angle);
+  }
+  else if (rxBuffer == "w") {
+    int angle = Serial.parseInt();
+    wrist.write(angle);
   }
 }
 
