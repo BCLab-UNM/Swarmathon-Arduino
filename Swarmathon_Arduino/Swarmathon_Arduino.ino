@@ -89,9 +89,9 @@ void setup()
   pressure.init();
   pressure.enableDefault();
 
-  fingers.attach(9,647,1472);
+  fingers.attach(fingersPin,647,1472);
   fingers.write(0);
-  wrist.attach(12,750,2400);
+  wrist.attach(wristPin,750,2400);
   wrist.write(0);
 
   rxBuffer = "";
@@ -154,11 +154,27 @@ void parse() {
   }
   else if (rxBuffer == "f") {
     int angle = Serial.parseInt();
-    fingers.write(angle);
+    if (angle == -1) {
+      fingers.write(fingers.read()+1);
+    }
+    else if (angle == -2) {
+      fingers.write(fingers.read()-1);
+    }
+    else {
+      fingers.write(angle);
+    }
   }
   else if (rxBuffer == "w") {
     int angle = Serial.parseInt();
-    wrist.write(angle);
+    if (angle == -1) {
+      wrist.write(wrist.read()+1);
+    }
+    else if (angle == -2) {
+      wrist.write(wrist.read()-1);
+    }
+    else {
+      wrist.write(angle);
+    }
   }
 }
 
