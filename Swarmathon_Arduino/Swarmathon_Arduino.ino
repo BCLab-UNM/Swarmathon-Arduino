@@ -158,30 +158,12 @@ void parse() {
   else if (rxBuffer == "f") {
     float radianAngle = Serial.parseFloat();
     int angle = RAD2DEG(radianAngle); // Convert float radians to int degrees
-    
-    if (angle == -1) {
-      fingers.write(fingers.read()+1);
-    }
-    else if (angle == -2) {
-      fingers.write(fingers.read()-1);
-    }
-    else {
-      fingers.write(angle);
-    }
+    fingers.write(angle);
   }
   else if (rxBuffer == "w") {
     float radianAngle = Serial.parseFloat();
     int angle = RAD2DEG(radianAngle); // Convert float radians to int degrees
-    
-    if (angle == -1) {
-      wrist.write(wrist.read()+1);
-    }
-    else if (angle == -2) {
-      wrist.write(wrist.read()-1);
-    }
-    else {
-      wrist.write(angle);
-    }
+    wrist.write(angle);
   }
 }
 
