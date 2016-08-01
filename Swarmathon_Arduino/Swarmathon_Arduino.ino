@@ -14,6 +14,9 @@
 #include <Odometry.h>
 #include <Ultrasound.h>
 
+// Constants
+#define PI 3.14159265358979323846
+#define RAD2DEG(radianAngle) (radianAngle * 180.0 / PI)
 
 ////////////////
 ////Settings////
@@ -153,28 +156,14 @@ void parse() {
     Serial.println(txBuffer);
   }
   else if (rxBuffer == "f") {
-    int angle = Serial.parseInt();
-    if (angle == -1) {
-      fingers.write(fingers.read()+1);
-    }
-    else if (angle == -2) {
-      fingers.write(fingers.read()-1);
-    }
-    else {
-      fingers.write(angle);
-    }
+    float radianAngle = Serial.parseFloat();
+    int angle = RAD2DEG(radianAngle); // Convert float radians to int degrees
+    fingers.write(angle);
   }
   else if (rxBuffer == "w") {
-    int angle = Serial.parseInt();
-    if (angle == -1) {
-      wrist.write(wrist.read()+1);
-    }
-    else if (angle == -2) {
-      wrist.write(wrist.read()-1);
-    }
-    else {
-      wrist.write(angle);
-    }
+    float radianAngle = Serial.parseFloat();
+    int angle = RAD2DEG(radianAngle); // Convert float radians to int degrees
+    wrist.write(angle);
   }
 }
 
