@@ -3,7 +3,6 @@
 //////////////////////////
 
 //Built-in Arduino libraries
-#include <Servo.h>
 #include <Wire.h>
 
 //Custom libraries located in Swarmathon-Arduino repo
@@ -12,6 +11,7 @@
 #include <LSM303.h>
 #include <Movement.h>
 #include <Odometry.h>
+#include <Servo.h>
 #include <Ultrasound.h>
 
 // Constants
