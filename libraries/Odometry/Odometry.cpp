@@ -41,7 +41,7 @@ Odometry::Odometry(byte rightEncoderAPin, byte rightEncoderBPin, byte leftEncode
     clock = millis();
 }
 
-void Odometry::update(float heading) {
+void Odometry::update() {
     //Calculate linear distance that each wheel has traveled
     float rightWheelDistance = ((float)rightEncoderCounter / _cpr) * _wheelDiameter * PI;
     float leftWheelDistance = ((float)leftEncoderCounter / _cpr) * _wheelDiameter * PI;
@@ -55,8 +55,8 @@ void Odometry::update(float heading) {
     
     //Decompose linear distance into its component values
     float meanWheelDistance = (rightWheelDistance + leftWheelDistance) / 2;
-    x = meanWheelDistance * cos(heading);
-    y = meanWheelDistance * sin(heading);
+    x = meanWheelDistance * cos(dtheta);
+    y = meanWheelDistance * sin(dtheta);
     //Calculate linear velocity
     vx = x / (millis() - clock) * 1000;
     vy = y / (millis() - clock) * 1000;

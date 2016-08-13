@@ -9,7 +9,7 @@ public:
     Odometry(byte rightEncoderAPin, byte rightEncoderBPin, byte leftEncoderAPin, byte leftEncoderBPin, float wheelBase, float wheelDiameter, int cpr);
     
     //Functions
-    void update(float heading);
+    void update();
     
     //Variables
     float x, y, theta;
