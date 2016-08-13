@@ -33,7 +33,6 @@ byte rightSpeedPin = 11; //PWM input
 byte leftDirectionA = A5; //"clockwise" input
 byte leftDirectionB = A4; //"counterclockwise" input
 byte leftSpeedPin = 10; //PWM input
-bool turning = false; //disables encoders when rotating
 
 //Odometry (8400 CPR Encoder)
 byte rightEncoderA = 7;
@@ -129,7 +128,6 @@ void loop() {
 
 void parse() {
   if (rxBuffer == "m") {
-    turning = false;
     int speed = Serial.parseInt();
     if (speed >= 0) {
       move.forward(speed, speed);
@@ -139,7 +137,6 @@ void parse() {
     }
   }
   else if (rxBuffer == "t") {
-    turning = true;
     int speed = Serial.parseInt();
     if (speed >= 0) {
       move.rotateLeft(speed);
@@ -174,6 +171,7 @@ void parse() {
 
 void update() {
   //Update current sensor values
+  odom.update();
   gyroscope.read();
   magnetometer_accelerometer.read();
 
@@ -198,12 +196,6 @@ void update() {
   float pitch = -atan2(linear_acceleration.x, sqrt(pow(linear_acceleration.y,2) + pow(linear_acceleration.z,2)));
   float yaw = atan2(-orientation.y*cos(roll) + orientation.z*sin(roll), orientation.x*cos(pitch) + orientation.y*sin(pitch)*sin(roll) + orientation.z*sin(pitch)*cos(roll)) + PI;
   orientation = {roll, pitch, yaw};
-
-  odom.update(orientation.z);
-  if (turning) {
-    odom.x = 0;
-    odom.y = 0;
-  }
 
   //Append data to buffer
   txBuffer = String(linear_acceleration.x) + "," +
