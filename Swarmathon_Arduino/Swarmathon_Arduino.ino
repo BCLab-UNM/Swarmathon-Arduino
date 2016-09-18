@@ -83,7 +83,9 @@ void setup()
 
   Wire.begin();
 
-  imuInit();
+  if (imuStatus()) {
+    imuInit();
+  }
 
   fingers.attach(fingersPin,647,1472);
   fingers.write(0);
@@ -233,4 +235,30 @@ void imuInit() {
 
   pressure.init();
   pressure.enableDefault();
+}
+
+
+////////////////////////////
+////Diagnostic Functions////
+////////////////////////////
+
+//Check for valid I2C connection to verify IMU
+bool imuStatus() {
+  byte numberOfDevices = 0;
+
+  for(byte address = 1; address < 127; address++ ) {
+    Wire.beginTransmission(address);
+    byte error = Wire.endTransmission();
+
+    if (!error) {
+      numberOfDevices++;
+    }
+  }
+
+  if (numberOfDevices > 0) {
+    return true;
+  }
+  else {
+    return false;
+  }
 }
