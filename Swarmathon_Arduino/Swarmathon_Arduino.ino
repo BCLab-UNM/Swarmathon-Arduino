@@ -82,14 +82,7 @@ void setup()
 
   Wire.begin();
 
-  gyroscope.init();
-  gyroscope.enableDefault();
-  magnetometer_accelerometer.init();
-  magnetometer_accelerometer.enableDefault();
-  magnetometer_accelerometer.m_min = (LSM303::vector<int16_t>){ -2523, -2802, -2688};
-  magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>){ +2710, +1151, +1549};
-  pressure.init();
-  pressure.enableDefault();
+  imuInit();
 
   fingers.attach(fingersPin,647,1472);
   fingers.write(0);
@@ -216,4 +209,23 @@ void update() {
              String(leftUS.distance()) + "," +
              String(centerUS.distance()) + "," +
              String(rightUS.distance());
+}
+////////////////////////////
+////Initializer Functions///
+////////////////////////////
+
+//Initialize gyroscope, accelerometer, magnetometer, and pressure gauge
+void imuInit() {
+  gyroscope.init();
+  gyroscope.enableDefault();
+  gyroscope.setTimeout(1);
+
+  magnetometer_accelerometer.init();
+  magnetometer_accelerometer.enableDefault();
+  magnetometer_accelerometer.m_min = (LSM303::vector<int16_t>){ -2523, -2802, -2688};
+  magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>){ +2710, +1151, +1549};
+  magnetometer_accelerometer.setTimeout(1);
+
+  pressure.init();
+  pressure.enableDefault();
 }
