@@ -46,7 +46,6 @@ int cpr = 8400; //"cycles per revolution" -- number of encoder increments per on
 
 //Serial (USB <--> Intel NUC)
 String rxBuffer;
-String txBuffer;
 unsigned long watchdogTimer = 1000; //fail-safe in case of communication link failure (in ms)
 unsigned long lastCommTime = 0; //time of last communication from NUC (in ms)
 
@@ -145,8 +144,6 @@ void parse() {
     move.stop();
   }
   else if (rxBuffer == "d") {
-    update();
-    Serial.println(txBuffer);
     Serial.print("GRF,");
     Serial.print(String(fingers.attached()) + ",");
     if (fingers.attached()) {
@@ -164,6 +161,18 @@ void parse() {
     else {
       Serial.println();
     }
+
+    Serial.print("IMU,");
+    Serial.print(String(imuStatus()) + ",");
+    if (imuStatus()) {
+      imuInit();
+      Serial.println(updateIMU());
+    }
+    else {
+      Serial.println(",,,,,,,,");
+    }
+
+    Serial.println("ODOM," + String(1) + "," + updateOdom());
 
     Serial.print("USL,");
     int leftUSValue = leftUS.ping_cm();
@@ -216,50 +225,63 @@ void parse() {
 //Update transmit buffer//
 //////////////////////////
 
-void update() {
+String updateIMU() {
   //Update current sensor values
-  odom.update();
   gyroscope.read();
   magnetometer_accelerometer.read();
 
-  //Collect updated values
-  LSM303::vector<int16_t> acc = magnetometer_accelerometer.a;
-  L3G::vector<int16_t> gyro = gyroscope.g;
-  LSM303::vector<int16_t> mag = magnetometer_accelerometer.m;
+  if (!gyroscope.timeoutOccurred() && !magnetometer_accelerometer.timeoutOccurred()) {
+    //Collect updated values
+    LSM303::vector<int16_t> acc = magnetometer_accelerometer.a;
+    L3G::vector<int16_t> gyro = gyroscope.g;
+    LSM303::vector<int16_t> mag = magnetometer_accelerometer.m;
 
-  //Convert accelerometer digits to milligravities, then to gravities, and finally to meters per second squared
-  LSM303::vector<float> linear_acceleration = {acc.y*0.061/1000*9.81, -acc.x*0.061/1000*9.81, acc.z*0.061/1000*9.81};
+    //Convert accelerometer digits to milligravities, then to gravities, and finally to meters per second squared
+    LSM303::vector<float> linear_acceleration = {acc.y*0.061/1000*9.81, -acc.x*0.061/1000*9.81, acc.z*0.061/1000*9.81};
 
-  //Convert gyroscope digits to millidegrees per second, then to degrees per second, and finally to radians per second
-  L3G::vector<float> angular_velocity = {gyro.y*8.75/1000*(PI/180), -gyro.x*8.75/1000*(PI/180), gyro.z*8.75/1000*(PI/180)};
+    //Convert gyroscope digits to millidegrees per second, then to degrees per second, and finally to radians per second
+    L3G::vector<float> angular_velocity = {gyro.y*8.75/1000*(PI/180), -gyro.x*8.75/1000*(PI/180), gyro.z*8.75/1000*(PI/180)};
 
-  //Combine normalized magnetometer and accelerometer digits to produce Euler angles, i.e. pitch, roll, and yaw
-  LSM303::vector<float> orientation = {(float)mag.x, (float)mag.y, (float)mag.z};
-  orientation.x -= (magnetometer_accelerometer.m_min.x + magnetometer_accelerometer.m_max.x) / 2;
-  orientation.y -= (magnetometer_accelerometer.m_min.y + magnetometer_accelerometer.m_max.y) / 2;
-  orientation.z -= (magnetometer_accelerometer.m_min.z + magnetometer_accelerometer.m_max.z) / 2;
-  LSM303::vector_normalize(&orientation);
-  float roll = atan2(linear_acceleration.y, sqrt(pow(linear_acceleration.x,2) + pow(linear_acceleration.z,2)));
-  float pitch = -atan2(linear_acceleration.x, sqrt(pow(linear_acceleration.y,2) + pow(linear_acceleration.z,2)));
-  float yaw = atan2(-orientation.y*cos(roll) + orientation.z*sin(roll), orientation.x*cos(pitch) + orientation.y*sin(pitch)*sin(roll) + orientation.z*sin(pitch)*cos(roll)) + PI;
-  orientation = {roll, pitch, yaw};
+    //Combine normalized magnetometer and accelerometer digits to produce Euler angles, i.e. pitch, roll, and yaw
+    LSM303::vector<float> orientation = {(float)mag.x, (float)mag.y, (float)mag.z};
+    orientation.x -= (magnetometer_accelerometer.m_min.x + magnetometer_accelerometer.m_max.x) / 2;
+    orientation.y -= (magnetometer_accelerometer.m_min.y + magnetometer_accelerometer.m_max.y) / 2;
+    orientation.z -= (magnetometer_accelerometer.m_min.z + magnetometer_accelerometer.m_max.z) / 2;
+    LSM303::vector_normalize(&orientation);
+    float roll = atan2(linear_acceleration.y, sqrt(pow(linear_acceleration.x,2) + pow(linear_acceleration.z,2)));
+    float pitch = -atan2(linear_acceleration.x, sqrt(pow(linear_acceleration.y,2) + pow(linear_acceleration.z,2)));
+    float yaw = atan2(-orientation.y*cos(roll) + orientation.z*sin(roll), orientation.x*cos(pitch) + orientation.y*sin(pitch)*sin(roll) + orientation.z*sin(pitch)*cos(roll)) + PI;
+    orientation = {roll, pitch, yaw};
 
-  //Append data to buffer
-  txBuffer = String(linear_acceleration.x) + "," +
-             String(linear_acceleration.y) + "," +
-             String(linear_acceleration.z) + "," +
-             String(angular_velocity.x) + "," +
-             String(angular_velocity.y) + "," +
-             String(angular_velocity.z) + "," +
-             String(orientation.x) + "," +
-             String(orientation.y) + "," +
-             String(orientation.z) + "," +
-             String(odom.x) + "," +
+    //Append data to buffer
+    String txBuffer = String(linear_acceleration.x) + "," +
+               String(linear_acceleration.y) + "," +
+               String(linear_acceleration.z) + "," +
+               String(angular_velocity.x) + "," +
+               String(angular_velocity.y) + "," +
+               String(angular_velocity.z) + "," +
+               String(orientation.x) + "," +
+               String(orientation.y) + "," +
+               String(orientation.z);
+
+    return txBuffer;
+  }
+
+  return "";
+}
+
+String updateOdom() {
+  String txBuffer;
+  odom.update();
+
+  txBuffer = String(odom.x) + "," +
              String(odom.y) + "," +
              String(odom.theta) + "," +
              String(odom.vx) + "," +
              String(odom.vy) + "," +
              String(odom.vtheta);
+
+  return txBuffer;
 }
 
 
