@@ -10,6 +10,7 @@
 #include <LPS.h>
 #include <LSM303.h>
 #include <Movement.h>
+#include <NewPing.h>
 #include <Odometry.h>
 #include <Servo.h>
 #include <Ultrasound.h>
