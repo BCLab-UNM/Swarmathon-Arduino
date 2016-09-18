@@ -13,7 +13,6 @@
 #include <NewPing.h>
 #include <Odometry.h>
 #include <Servo.h>
-#include <Ultrasound.h>
 
 // Constants
 #define PI 3.14159265358979323846
@@ -68,9 +67,9 @@ Movement move = Movement(rightSpeedPin, rightDirectionA, rightDirectionB, leftSp
 Odometry odom = Odometry(rightEncoderA, rightEncoderB, leftEncoderA, leftEncoderB, wheelBase, wheelDiameter, cpr);
 Servo fingers;
 Servo wrist;
-Ultrasound leftUS = Ultrasound(leftSignal);
-Ultrasound centerUS = Ultrasound(centerSignal);
-Ultrasound rightUS = Ultrasound(rightSignal);
+NewPing leftUS(leftSignal, leftSignal, 330);
+NewPing centerUS(centerSignal, centerSignal, 330);
+NewPing rightUS(rightSignal, rightSignal, 330);
 
 
 /////////////
@@ -148,6 +147,35 @@ void parse() {
   else if (rxBuffer == "d") {
     update();
     Serial.println(txBuffer);
+    Serial.print("USL,");
+    int leftUSValue = leftUS.ping_cm();
+    Serial.print(String(leftUSValue > 0 ? 1 : 0) + ",");
+    if (leftUSValue > 0) {
+      Serial.println(String(leftUSValue));
+    }
+    else {
+      Serial.println();
+    }
+
+    Serial.print("USC,");
+    int centerUSValue = centerUS.ping_cm();
+    Serial.print(String(centerUSValue > 0 ? 1 : 0) + ",");
+    if (centerUSValue > 0) {
+      Serial.println(String(centerUSValue));
+    }
+    else {
+      Serial.println();
+    }
+
+    Serial.print("USR,");
+    int rightUSValue = rightUS.ping_cm();
+    Serial.print(String(rightUSValue > 0 ? 1 : 0) + ",");
+    if (rightUSValue > 0) {
+      Serial.println(String(rightUSValue));
+    }
+    else {
+      Serial.println();
+    }
   }
   else if (rxBuffer == "f") {
     if (fingers.attached()) {
@@ -213,11 +241,10 @@ void update() {
              String(odom.theta) + "," +
              String(odom.vx) + "," +
              String(odom.vy) + "," +
-             String(odom.vtheta) + "," +
-             String(leftUS.distance()) + "," +
-             String(centerUS.distance()) + "," +
-             String(rightUS.distance());
+             String(odom.vtheta);
 }
+
+
 ////////////////////////////
 ////Initializer Functions///
 ////////////////////////////
