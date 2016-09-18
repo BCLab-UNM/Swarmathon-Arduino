@@ -147,6 +147,24 @@ void parse() {
   else if (rxBuffer == "d") {
     update();
     Serial.println(txBuffer);
+    Serial.print("GRF,");
+    Serial.print(String(fingers.attached()) + ",");
+    if (fingers.attached()) {
+      Serial.println(String(DEG2RAD(fingers.read())));
+    }
+    else {
+      Serial.println();
+    }
+
+    Serial.print("GRW,");
+    Serial.print(String(wrist.attached()) + ",");
+    if (wrist.attached()) {
+      Serial.println(String(DEG2RAD(wrist.read())));
+    }
+    else {
+      Serial.println();
+    }
+
     Serial.print("USL,");
     int leftUSValue = leftUS.ping_cm();
     Serial.print(String(leftUSValue > 0 ? 1 : 0) + ",");
