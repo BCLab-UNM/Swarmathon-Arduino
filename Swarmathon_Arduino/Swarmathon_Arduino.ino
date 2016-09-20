@@ -11,12 +11,20 @@
 #include <LSM303.h>
 #include <Movement.h>
 #include <Odometry.h>
+#include <Servo.h>
 #include <Ultrasound.h>
 
+// Constants
+#define PI 3.14159265358979323846
+#define RAD2DEG(radianAngle) (radianAngle * 180.0 / PI)
 
 ////////////////
 ////Settings////
 ////////////////
+
+//Gripper (HS-485HB Servo)
+byte fingersPin = 9;
+byte wristPin = 12;
 
 //Movement (VNH5019 Motor Driver Carrier)
 byte rightDirectionA = A3; //"clockwise" input
@@ -25,7 +33,6 @@ byte rightSpeedPin = 11; //PWM input
 byte leftDirectionA = A5; //"clockwise" input
 byte leftDirectionB = A4; //"counterclockwise" input
 byte leftSpeedPin = 10; //PWM input
-bool turning = false;
 
 //Odometry (8400 CPR Encoder)
 byte rightEncoderA = 7;
@@ -39,6 +46,8 @@ int cpr = 8400; //"cycles per revolution" -- number of encoder increments per on
 //Serial (USB <--> Intel NUC)
 String rxBuffer;
 String txBuffer;
+unsigned long watchdogTimer = 1000; //fail-safe in case of communication link failure (in ms)
+unsigned long lastCommTime = 0; //time of last communication from NUC (in ms)
 
 //Ultrasound (Ping))))
 byte leftSignal = 4;
@@ -55,6 +64,8 @@ LSM303 magnetometer_accelerometer;
 LPS pressure;
 Movement move = Movement(rightSpeedPin, rightDirectionA, rightDirectionB, leftSpeedPin, leftDirectionA, leftDirectionB);
 Odometry odom = Odometry(rightEncoderA, rightEncoderB, leftEncoderA, leftEncoderB, wheelBase, wheelDiameter, cpr);
+Servo fingers;
+Servo wrist;
 Ultrasound leftUS = Ultrasound(leftSignal);
 Ultrasound centerUS = Ultrasound(centerSignal);
 Ultrasound rightUS = Ultrasound(rightSignal);
@@ -80,6 +91,11 @@ void setup()
   pressure.init();
   pressure.enableDefault();
 
+  fingers.attach(fingersPin,647,1472);
+  fingers.write(0);
+  wrist.attach(wristPin,750,2400);
+  wrist.write(0);
+
   rxBuffer = "";
 }
 
@@ -94,10 +110,14 @@ void loop() {
     if (c == ',' || c == '\n') {
       parse();
       rxBuffer = "";
+      lastCommTime = millis();
     }
     else if (c > 0) {
       rxBuffer += c;
     }
+  }
+  if (millis() - lastCommTime > watchdogTimer) {
+    move.stop();
   }
 }
 
@@ -108,7 +128,6 @@ void loop() {
 
 void parse() {
   if (rxBuffer == "m") {
-    turning = false;
     int speed = Serial.parseInt();
     if (speed >= 0) {
       move.forward(speed, speed);
@@ -118,7 +137,6 @@ void parse() {
     }
   }
   else if (rxBuffer == "t") {
-    turning = true;
     int speed = Serial.parseInt();
     if (speed >= 0) {
       move.rotateLeft(speed);
@@ -134,6 +152,16 @@ void parse() {
     update();
     Serial.println(txBuffer);
   }
+  else if (rxBuffer == "f") {
+    float radianAngle = Serial.parseFloat();
+    int angle = RAD2DEG(radianAngle); // Convert float radians to int degrees
+    fingers.write(angle);
+  }
+  else if (rxBuffer == "w") {
+    float radianAngle = Serial.parseFloat();
+    int angle = RAD2DEG(radianAngle); // Convert float radians to int degrees
+    wrist.write(angle);
+  }
 }
 
 
@@ -143,6 +171,7 @@ void parse() {
 
 void update() {
   //Update current sensor values
+  odom.update();
   gyroscope.read();
   magnetometer_accelerometer.read();
 
@@ -167,12 +196,6 @@ void update() {
   float pitch = -atan2(linear_acceleration.x, sqrt(pow(linear_acceleration.y,2) + pow(linear_acceleration.z,2)));
   float yaw = atan2(-orientation.y*cos(roll) + orientation.z*sin(roll), orientation.x*cos(pitch) + orientation.y*sin(pitch)*sin(roll) + orientation.z*sin(pitch)*cos(roll)) + PI;
   orientation = {roll, pitch, yaw};
-
-  odom.update(orientation.z);
-  if (turning) {
-    odom.x = 0;
-    odom.y = 0;
-  }
 
   //Append data to buffer
   txBuffer = String(linear_acceleration.x) + "," +
