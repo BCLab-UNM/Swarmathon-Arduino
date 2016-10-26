@@ -9,6 +9,25 @@ If you are using Linux, you'll need to run several additional commands to ensure
 
 After installing the Arduino IDE, run the application and open the Arduino IDE Preferences window (under "File > Preferences" in Linux and Windows, or "Arduino > Preferences" in Mac OS X). Under the Settings tab, in the text box titled "Sketchbook location", enter the full path to your Swarmathon-Arduino directory, then click "OK":
 
-![Alt text](http://swarmathon.cs.unm.edu/img/Sketchbook.png "Arduino IDE Sketchbook location")
+![Arduino IDE Sketchbook location](http://swarmathon.cs.unm.edu/img/Sketchbook.png)
 
-**Note** that you must exist and reopen the Arduino IDE before the change to the Sketchbook location is applied.
+**Note** that you must exit and reopen the Arduino IDE before the change to the Sketchbook location is applied.
+
+## Setup
+
+1. To set up the Arduino IDE to communicate with the Swarmie's [Pololu A-Star microcontroller](https://www.pololu.com/product/3104), which runs an Arduino-compatible bootloader, first set the board type under "Select > Board" to "Arduino Leonardo".
+
+  ![Arduino IDE Board Type](http://swarmathon.cs.unm.edu/img/ArduinoIDEBoardType.png)
+
+2. Ensure that the A-Star is plugged into your PC (not the Swarmie's NUC), then select the proper serial port under "Select > Port".
+
+  ![Arduino IDE Serial Port](http://swarmathon.cs.unm.edu/img/ArduinoIDESerialPort.png)
+
+3. If you haven't loaded it already, open the Swarmathon_Arduino.ino sketch under "File > Open" by navigating to your Swarmathon-Arduino directory.
+
+  ![Arduino IDE Open Sketch](http://swarmathon.cs.unm.edu/img/ArduinoIDEOpenSketch.png)
+  ![Arduino IDE Open Sketch](http://swarmathon.cs.unm.edu/img/ArduinoIDEOpenSketch2.png)
+
+4. Upload the sketch to the A-Star by clicking on the "Upload" button, a right arrow in the upper-left corner of the Arduino IDE.
+
+  ![Arduino IDE Upload Sketch](http://swarmathon.cs.unm.edu/img/ArduinoIDEUploadSketch.png)
