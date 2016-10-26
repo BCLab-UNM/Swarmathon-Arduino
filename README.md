@@ -26,12 +26,17 @@ After installing the Arduino IDE, run the application and open the Arduino IDE P
 3. If you haven't loaded it already, open the Swarmathon_Arduino.ino sketch under "File > Open" by navigating to your Swarmathon-Arduino directory.
 
   ![Arduino IDE Open Sketch](http://swarmathon.cs.unm.edu/img/ArduinoIDEOpenSketch.png)
-  ![Arduino IDE Open Sketch](http://swarmathon.cs.unm.edu/img/ArduinoIDEOpenSketch2.png)
+  ![Arduino IDE Open Sketch2](http://swarmathon.cs.unm.edu/img/ArduinoIDEOpenSketch2.png)
 
 4. Upload the sketch to the A-Star by clicking on the "Upload" button, a right arrow in the upper-left corner of the Arduino IDE.
 
   ![Arduino IDE Upload Sketch](http://swarmathon.cs.unm.edu/img/ArduinoIDEUploadSketch.png)
 
+5. If your upload is successful, you should see output in the black terminal box at the bottom of the Arduino IDE regarding the size of the sketch, as well as a "Done uploading" message above this black box. If the Arduino IDE outputs an error, please double-check that you have followed steps 1 through 4 above correctly.
+
+  ![Arduino IDE Upload Success](http://swarmathon.cs.unm.edu/img/ArduinoIDEUploadSuccess.png)
+  
 
 ## Debugging
 
+If you are encountering issues with your Swarmie, such as missing IMU, encoder, and/or ultrasoud data, or problems with driving the robot, please consult the suggestions below.
