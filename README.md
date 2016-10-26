@@ -39,4 +39,40 @@ After installing the Arduino IDE, run the application and open the Arduino IDE P
 
 ## Debugging
 
-If you are encountering issues with your Swarmie, such as missing IMU, encoder, and/or ultrasoud data, or problems with driving the robot, please consult the suggestions below.
+If you are encountering issues with your Swarmie, such as missing IMU, encoder, and/or ultrasound data, or problems with driving the robot, please consult the suggestions below after connecting the A-Star microcontroller to your PC and following steps 1 through 5 above.
+
+1. Open the Arduino IDE and click the Serial Monitor button, a magnifying glass in the upper-right corner of the Arduino IDE.
+
+  ![Arduino IDE Serial Monitor](http://swarmathon.cs.unm.edu/img/ArduinoIDESerialMonitor.png)
+
+  In the drop-down menus at the bottom of the Serial Monitor window that appears, ensure that the line ending option is set to "Newline", and that the baud rate is set to "115200 baud".
+
+  ![Arduino IDE Line Ending and Baudrate](http://swarmathon.cs.unm.edu/img/ArduinoIDELineEndingBaudRate.png)
+
+2. Type `d` into the entry bar at the top of the Serial Monitor window and click the **Send** button.
+
+  ![Arduino Debug Data Input](http://swarmathon.cs.unm.edu/img/ArduinoDebugDataInput.png)
+
+  You should receive a comma-delimited string of 18 floating-point values, similar to, but not identical to, the string shown here.
+  
+  ![Arduino Debug Data Output](http://swarmathon.cs.unm.edu/img/ArduinoDebugDataOutput.png)
+  
+3. Type `f,1` into the entry bar and click **Send**. This command should open the gripper fingers to the angle shown.
+
+  ![Arduino Debug Fingers Open](http://swarmathon.cs.unm.edu/img/ArduinoDebugFingersOpen.png)
+  
+4. Type `w,1` into the entry bar and click **Send**. This command should lower the gripper wrist to the angle shown.
+
+  ![Arduino Debug Wrist Down](http://swarmathon.cs.unm.edu/img/ArduinoDebugWristDown.png)
+  
+5. High-center the robot on a box so that none of the wheels are touching the ground. Ensure that the motors are turned on by flipping the red switch on the back of the robot up.
+
+  ![Arduino Debug High Center](http://swarmathon.cs.unm.edu/img/ArduinoDebugHighCenter.png)
+  
+   Type `m,80` into the entry bar and click **Send**. The wheels should spin forward (rotating toward the front of the robot) for one second, then stop automatically.
+  
+  Type `m,-80` into the entry bar and click **Send**. The wheels should spin backward (rotating toward the back of the robot) for one second, then stop automatically.
+  
+  Type `t, 80` into the entry bar and click **Send**. The wheels on the left side of the robot should spin backward, while the wheels on the right side of the robot should spin forward, for one second, then stop automatically.
+  
+  Finally, type `t, -80` into the entry bar and click **Send**. The wheels on the left side of the robot should spin forward, while the wheels on the right side of the robot should spin backward, for one second, then stop automatically.
