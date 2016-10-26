@@ -19,7 +19,7 @@ After installing the Arduino IDE, run the application and open the Arduino IDE P
 
   ![Arduino IDE Board Type](http://swarmathon.cs.unm.edu/img/ArduinoIDEBoardType.png)
 
-2. Ensure that the A-Star is plugged into your PC (not the Swarmie's NUC), then select the proper serial port under "Select > Port".
+2. Ensure that the A-Star is plugged into your PC (not the Swarmie's NUC), then select the proper serial port under "Select > Port". Your port number will most likely differ from the one shown in the screenshot below, but you should still see "Arduino Leonardo" next to the correct port.
 
   ![Arduino IDE Serial Port](http://swarmathon.cs.unm.edu/img/ArduinoIDESerialPort.png)
 
@@ -31,3 +31,7 @@ After installing the Arduino IDE, run the application and open the Arduino IDE P
 4. Upload the sketch to the A-Star by clicking on the "Upload" button, a right arrow in the upper-left corner of the Arduino IDE.
 
   ![Arduino IDE Upload Sketch](http://swarmathon.cs.unm.edu/img/ArduinoIDEUploadSketch.png)
+
+
+## Debugging
+
