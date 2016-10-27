@@ -9,7 +9,7 @@ If you are using Linux, you'll need to run several additional commands to ensure
 
 After installing the Arduino IDE, run the application and open the Arduino IDE Preferences window (under "File > Preferences" in Linux and Windows, or "Arduino > Preferences" in Mac OS X). Under the Settings tab, in the text box titled "Sketchbook location", enter the full path to your Swarmathon-Arduino directory, then click "OK":
 
-![Arduino IDE Sketchbook location](http://swarmathon.cs.unm.edu/img/Sketchbook.png)
+![Arduino IDE Sketchbook location](https://github.com/BCLab-UNM/Swarmathon-Arduino/blob/master/readmeImages/ArduinoIDESketchbookLocation.png)
 
 **Note** that you must exit and reopen the Arduino IDE before the change to the Sketchbook location is applied.
 
