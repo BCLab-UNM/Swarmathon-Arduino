@@ -26,6 +26,10 @@
 //Gripper (HS-485HB Servo)
 byte fingersPin = 9;
 byte wristPin = 12;
+int fingerMin = 750; //if you want to shift 0 to a new location raise min; this is closed
+int fingerMax = 2600; //if you want to limit max travel lower max; this is open
+int wristMin = 1400; //this is up
+int wristMax = 2600; //this is down
 
 //Movement (VNH5019 Motor Driver Carrier)
 byte rightDirectionA = A3; //"clockwise" input
@@ -86,10 +90,10 @@ void setup()
     imuInit();
   }
 
-  fingers.attach(fingersPin,647,1472);
-  fingers.write(0);
-  wrist.attach(wristPin,750,2400);
-  wrist.write(0);
+  fingers.attach(fingersPin,fingerMin,fingerMax);
+  fingers.writeMicroseconds(fingerMin);
+  wrist.attach(wristPin,wristMin,wristMax);
+  wrist.writeMicroseconds(wristMin);
 
   rxBuffer = "";
 }
@@ -205,18 +209,16 @@ void parse() {
     }
   }
   else if (rxBuffer == "f") {
-    if (fingers.attached()) {
-      float radianAngle = Serial.parseFloat();
-      int angle = RAD2DEG(radianAngle); // Convert float radians to int degrees
-      fingers.write(angle);
-    }
+    float radianAngle = Serial.parseFloat();
+    int angle = RAD2DEG(radianAngle); // Convert float radians to int degrees
+    angle = fingerMin + (fingerMax/370) * angle;
+    fingers.writeMicroseconds(angle);
   }
   else if (rxBuffer == "w") {
-    if (wrist.attached()) {
-      float radianAngle = Serial.parseFloat();
-      int angle = RAD2DEG(radianAngle); // Convert float radians to int degrees
-      wrist.write(angle);
-    }
+    float radianAngle = Serial.parseFloat();
+    int angle = RAD2DEG(radianAngle); // Convert float radians to int degrees
+    angle = wristMin + (wristMax/370) * angle;
+    wrist.writeMicroseconds(angle);
   }
 }
 
