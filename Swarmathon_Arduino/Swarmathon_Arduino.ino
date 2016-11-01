@@ -25,7 +25,7 @@
 //Gripper (HS-485HB Servo)
 byte fingersPin = 9;
 byte wristPin = 12;
-int fingerMin = 750; //if you want to shift 0 to a new location raise min; this is closed
+int fingerMin = 800; //if you want to shift 0 to a new location raise min; this is closed
 int fingerMax = 2600; //if you want to limit max travel lower max; this is open
 int wristMin = 1400; //this is up
 int wristMax = 2600; //this is down
