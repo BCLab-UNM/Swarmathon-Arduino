@@ -126,22 +126,21 @@ void loop() {
 ////////////////////////
 
 void parse() {
-  if (rxBuffer == "m") {
-    int speed = Serial.parseInt();
-    if (speed >= 0) {
-      move.forward(speed, speed);
+  if (rxBuffer == "v") {
+    int speedL = Serial.parseInt();
+    int speedR = Serial.parseInt();
+    
+    if (speedL >= 0 && speedR >= 0) {
+      move.forward(speedL, speedR);
+    }
+    else if (speedL <= 0 && speedR <= 0) {
+      move.backward(abs(speedL), abs(speedR));
+    }
+    else if (speedL >= 0 && speedR <= 0) {
+      move.rotateLeft(speedL, speedR);
     }
     else {
-      move.backward(abs(speed), abs(speed));
-    }
-  }
-  else if (rxBuffer == "t") {
-    int speed = Serial.parseInt();
-    if (speed >= 0) {
-      move.rotateLeft(speed);
-    }
-    else {
-      move.rotateRight(abs(speed));
+      move.rotateRight(abs(speedL), abs(speedR));
     }
   }
   else if (rxBuffer == "s") {
