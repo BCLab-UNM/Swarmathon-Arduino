@@ -134,13 +134,13 @@ void parse() {
       move.forward(speedL, speedR);
     }
     else if (speedL <= 0 && speedR <= 0) {
-      move.backward(abs(speedL), abs(speedR));
+      move.backward(speedL*-1, speedR*-1);
     }
-    else if (speedL >= 0 && speedR <= 0) {
-      move.rotateLeft(speedL, speedR);
+    else if (speedL <= 0 && speedR >= 0) {
+      move.rotateLeft(speedL*-1, speedR);
     }
     else {
-      move.rotateRight(abs(speedL), abs(speedR));
+      move.rotateRight(speedL, speedR*-1);
     }
   }
   else if (rxBuffer == "s") {
@@ -298,8 +298,8 @@ void imuInit() {
 
   magnetometer_accelerometer.init();
   magnetometer_accelerometer.enableDefault();
-  magnetometer_accelerometer.m_min = (LSM303::vector<int16_t>){ -2523, -2802, -2688};
-  magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>){ +2710, +1151, +1549};
+  magnetometer_accelerometer.m_min = (LSM303::vector<int16_t>){ -2247,  -2068,  -1114};
+  magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>){+3369,  +2877,  +3634};
   magnetometer_accelerometer.setTimeout(1);
 
   pressure.init();
