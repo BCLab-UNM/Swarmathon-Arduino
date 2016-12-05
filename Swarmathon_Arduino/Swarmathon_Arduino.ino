@@ -166,8 +166,9 @@ void parse() {
     }
 
     Serial.print("IMU,");
-    Serial.print(String(imuStatus()) + ",");
-    if (imuStatus()) {
+    bool imuStatusFlag = imuStatus();
+    Serial.print(String(imuStatusFlag) + ",");
+    if (imuStatusFlag) {
       imuInit();
       Serial.println(updateIMU());
     }
