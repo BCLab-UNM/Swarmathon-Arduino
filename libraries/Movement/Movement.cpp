@@ -45,25 +45,25 @@ void Movement::backward(byte leftSpeed, byte rightSpeed) {
 /**
  *	Rotates right at speed.  Treads will move in opposite directions
  **/
-void Movement::rotateRight(byte speed) {
+void Movement::rotateRight(byte leftSpeed, byte rightSpeed) {
     digitalWrite(_leftDirectionA, LOW);
     digitalWrite(_leftDirectionB, HIGH);
-    analogWrite(_leftSpeedPin, speed);
+    analogWrite(_leftSpeedPin, leftSpeed);
     digitalWrite(_rightDirectionA, LOW);
     digitalWrite(_rightDirectionB, HIGH);
-    analogWrite(_rightSpeedPin, speed);
+    analogWrite(_rightSpeedPin, rightSpeed);
 }
 
 /**
  *	Rotates left at speed.  Treads will move in opposite directions
  **/
-void Movement::rotateLeft(byte speed) {
+void Movement::rotateLeft(byte leftSpeed, byte rightSpeed) {
     digitalWrite(_leftDirectionA, HIGH);
     digitalWrite(_leftDirectionB, LOW);
-    analogWrite(_leftSpeedPin, speed);
+    analogWrite(_leftSpeedPin, leftSpeed);
     digitalWrite(_rightDirectionA, HIGH);
     digitalWrite(_rightDirectionB, LOW);
-    analogWrite(_rightSpeedPin, speed);
+    analogWrite(_rightSpeedPin, rightSpeed);
 }
 
 /**

@@ -12,8 +12,8 @@ class Movement
 		//Functions
 		void forward(byte leftSpeed, byte rightSpeed);
 		void backward(byte leftSpeed, byte rightSpeed);
-		void rotateRight(byte speed);
-		void rotateLeft(byte speed);
+		void rotateRight(byte leftSpeed, byte rightSpeed);
+		void rotateLeft(byte leftSpeed, byte rightSpeed);
 		void stop();
 		
 	private:
