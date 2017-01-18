@@ -69,10 +69,10 @@ If you are encountering issues with your Swarmie, such as missing IMU, encoder, 
 
   ![Arduino Debug High Center](https://github.com/BCLab-UNM/Swarmathon-Arduino/blob/master/readmeImages/ArduinoDebugHighCenter.png)
   
-   Type `m,80` into the entry bar and click **Send**. The wheels should spin forward (rotating toward the front of the robot) for one second, then stop automatically.
+   Type `v,80,80` into the entry bar and click **Send**. The wheels should spin forward (rotating toward the front of the robot) for one second, then stop automatically.
   
-  Type `m,-80` into the entry bar and click **Send**. The wheels should spin backward (rotating toward the back of the robot) for one second, then stop automatically.
+  Type `v,-80,-80` into the entry bar and click **Send**. The wheels should spin backward (rotating toward the back of the robot) for one second, then stop automatically.
   
-  Type `t, 80` into the entry bar and click **Send**. The wheels on the left side of the robot should spin backward, while the wheels on the right side of the robot should spin forward, for one second, then stop automatically.
+  Type `v,-80,80` into the entry bar and click **Send**. The wheels on the left side of the robot should spin backward, while the wheels on the right side of the robot should spin forward, for one second, then stop automatically.
   
-  Finally, type `t, -80` into the entry bar and click **Send**. The wheels on the left side of the robot should spin forward, while the wheels on the right side of the robot should spin backward, for one second, then stop automatically.
+  Finally, type `v,80,-80` into the entry bar and click **Send**. The wheels on the left side of the robot should spin forward, while the wheels on the right side of the robot should spin backward, for one second, then stop automatically.
