@@ -15,31 +15,38 @@ After installing the Arduino IDE, run the application and open the Arduino IDE P
 
 ## Setup
 
-1. To set up the Arduino IDE to communicate with the Swarmie's [Pololu A-Star microcontroller](https://www.pololu.com/product/3104), which runs an Arduino-compatible bootloader, first set the board type under "Select > Board" to "Arduino Leonardo".
+1. Clone this GitHub repository to your home directory (~):
+
+  ```
+  cd ~
+  git clone https://github.com/BCLab-UNM/Swarmathon-Arduino.git 
+  ```
+
+2. To set up the Arduino IDE to communicate with the Swarmie's [Pololu A-Star microcontroller](https://www.pololu.com/product/3104), which runs an Arduino-compatible bootloader, first set the board type under "Select > Board" to "Arduino Leonardo".
 
   ![Arduino IDE Board Type](https://github.com/BCLab-UNM/Swarmathon-Arduino/blob/master/readmeImages/ArduinoIDEBoardType.png)
 
-2. Ensure that the A-Star is plugged into your PC (not the Swarmie's NUC), then select the proper serial port under "Select > Port". Your port number will most likely differ from the one shown in the screenshot below, but you should still see "Arduino Leonardo" next to the correct port.
+3. Ensure that the A-Star is plugged into your PC (not the Swarmie's NUC), then select the proper serial port under "Select > Port". Your port number will most likely differ from the one shown in the screenshot below, but you should still see "Arduino Leonardo" next to the correct port.
 
   ![Arduino IDE Serial Port](https://github.com/BCLab-UNM/Swarmathon-Arduino/blob/master/readmeImages/ArduinoIDESerialPort.png)
 
-3. If you haven't loaded it already, open the Swarmathon_Arduino.ino sketch under "File > Open" by navigating to your Swarmathon-Arduino directory.
+4. If you haven't loaded it already, open the Swarmathon_Arduino.ino sketch under "File > Open" by navigating to your Swarmathon-Arduino directory.
 
   ![Arduino IDE Open Sketch](https://github.com/BCLab-UNM/Swarmathon-Arduino/blob/master/readmeImages/ArduinoIDEOpenSketch.png)
   ![Arduino IDE Open Sketch2](https://github.com/BCLab-UNM/Swarmathon-Arduino/blob/master/readmeImages/ArduinoIDEOpenSketch2.png)
 
-4. Upload the sketch to the A-Star by clicking on the "Upload" button, a right arrow in the upper-left corner of the Arduino IDE.
+5. Upload the sketch to the A-Star by clicking on the "Upload" button, a right arrow in the upper-left corner of the Arduino IDE.
 
   ![Arduino IDE Upload Sketch](https://github.com/BCLab-UNM/Swarmathon-Arduino/blob/master/readmeImages/ArduinoIDEUploadSketch.png)
 
-5. If your upload is successful, you should see output in the black terminal box at the bottom of the Arduino IDE regarding the size of the sketch, as well as a "Done uploading" message above this black box. If the Arduino IDE outputs an error, please double-check that you have followed steps 1 through 4 above correctly.
+6. If your upload is successful, you should see output in the black terminal box at the bottom of the Arduino IDE regarding the size of the sketch, as well as a "Done uploading" message above this black box. If the Arduino IDE outputs an error, please double-check that you have followed steps 1 through 4 above correctly.
 
   ![Arduino IDE Upload Success](https://github.com/BCLab-UNM/Swarmathon-Arduino/blob/master/readmeImages/ArduinoIDEUploadSuccess.png)
   
 
 ## Debugging
 
-If you are encountering issues with your Swarmie, such as missing IMU, encoder, and/or ultrasound data, or problems with driving the robot, please consult the suggestions below after connecting the A-Star microcontroller to your PC and following steps 1 through 5 above.
+If you are encountering issues with your Swarmie, such as missing IMU, encoder, and/or ultrasound data, or problems with driving the robot, please consult the suggestions below after connecting the A-Star microcontroller to your PC and following steps 1 through 6 above.
 
 1. Open the Arduino IDE and click the Serial Monitor button, a magnifying glass in the upper-right corner of the Arduino IDE.
 
