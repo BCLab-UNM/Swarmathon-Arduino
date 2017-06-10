@@ -67,7 +67,7 @@ L3G gyroscope;
 LSM303 magnetometer_accelerometer;
 LPS pressure;
 Movement move = Movement(rightSpeedPin, rightDirectionA, rightDirectionB, leftSpeedPin, leftDirectionA, leftDirectionB);
-Odometry odom = Odometry(rightEncoderA, rightEncoderB, leftEncoderA, leftEncoderB, wheelBase, wheelDiameter, cpr);
+Odometry odom = Odometry(rightEncoderA, rightEncoderB, leftEncoderA, leftEncoderB);
 Servo fingers;
 Servo wrist;
 NewPing leftUS(leftSignal, leftSignal, 330);
@@ -276,12 +276,9 @@ String updateOdom() {
   String txBuffer;
   odom.update();
 
-  txBuffer = String(odom.x) + "," +
-             String(odom.y) + "," +
-             String(odom.theta) + "," +
-             String(odom.vx) + "," +
-             String(odom.vy) + "," +
-             String(odom.vtheta);
+  txBuffer = String(odom.left) + "," +
+             String(odom.right) + "," +
+             String(odom.clock)
 
   return txBuffer;
 }
