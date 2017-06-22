@@ -35,7 +35,6 @@ Odometry::Odometry(byte rightEncoderAPin, byte rightEncoderBPin, byte leftEncode
     _leftEncoderBPin = leftEncoderBPin;
     right = 0;
     left = 0;
-    ts = 0;
     clock = millis();
 }
 
