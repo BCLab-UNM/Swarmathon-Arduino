@@ -278,7 +278,7 @@ String updateOdom() {
 
   txBuffer = String(odom.left) + "," +
              String(odom.right) + "," +
-             String(odom.clock)
+             String(odom.clock);
 
   return txBuffer;
 }
