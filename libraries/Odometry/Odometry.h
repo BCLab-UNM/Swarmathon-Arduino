@@ -12,7 +12,7 @@ public:
     void update();
     
     //Variables
-    uint16_t right, left;
+    int16_t right, left;
     long clock;
 };
 
