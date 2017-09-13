@@ -13,7 +13,7 @@ public:
     
     //Variables
     int16_t right, left;
-    long clock;
+    unsigned long clock;
 };
 
 #endif
