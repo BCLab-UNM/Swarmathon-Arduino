@@ -88,17 +88,19 @@ NewPing rightUS(rightSignal, rightSignal, 330);
 struct cal_t {
   uint32_t header = CAL_HEADER_WORD;
   struct cal_data_t { 
-    uint16_t x_min = 65535;
-    uint16_t x_max = 0;
-    uint16_t y_min = 65535;
-    uint16_t y_max = 0;
-    uint16_t z_min = 65535;
-    uint16_t z_max = 0;
+    int16_t x_min = INT16_MAX;
+    int16_t x_max = INT16_MIN;
+    int16_t y_min = INT16_MAX;
+    int16_t y_max = INT16_MIN;
+    int16_t z_min = INT16_MAX;
+    int16_t z_max = INT16_MIN;
   } data;
   uint32_t crc32 = 0;
 } calibration;
+bool stored_calibration_used = false;
 
 void commitCalibration();
+void clearCalibration();
 bool readCalibration(cal_t &cal);
 
 /////////////
@@ -250,6 +252,57 @@ void parse() {
     // Commit the current observed calibration to EEPROM.
     commitCalibration();
   }
+  else if (rxBuffer == "X") {
+    // Clear the EEPROM calibration.
+    clearCalibration();
+  }
+  else if (rxBuffer == "P") {
+    // Print the current measured and stored calibration for debugging.
+    Serial.println("Runtime calibration:");
+    Serial.print("  x (min/max): ");
+    Serial.print(calibration.data.x_min);
+    Serial.print(" / ");
+    Serial.println(calibration.data.x_max);
+    
+    Serial.print("  y (min/max): ");
+    Serial.print(calibration.data.y_min);
+    Serial.print(" / ");
+    Serial.println(calibration.data.y_max);
+
+    Serial.print("  z (min/max): ");
+    Serial.print(calibration.data.z_min);
+    Serial.print(" / ");
+    Serial.println(calibration.data.z_max);
+
+    Serial.println();
+    Serial.println("Curerent calibration:");
+    Serial.print("  x (min/max): ");
+    Serial.print(magnetometer_accelerometer.m_min.x);
+    Serial.print(" / ");
+    Serial.println(magnetometer_accelerometer.m_max.x);
+    
+    Serial.print("  y (min/max): ");
+    Serial.print(magnetometer_accelerometer.m_min.y);
+    Serial.print(" / ");
+    Serial.println(magnetometer_accelerometer.m_max.y);
+
+    Serial.print("  z (min/max): ");
+    Serial.print(magnetometer_accelerometer.m_min.z);
+    Serial.print(" / ");
+    Serial.println(magnetometer_accelerometer.m_max.z);
+
+    Serial.println();
+    if (stored_calibration_used)
+      Serial.println("Stored calibration was used.");
+    else
+      Serial.println("Stored calibration was NOT used.");      
+  }
+}
+
+void clearCalibration() {
+  for (int i=0; i<sizeof(cal_t); i++) {
+    EEPROM.write(i, 0xff);
+  }
 }
 
 void commitCalibration() {
@@ -376,6 +429,7 @@ void imuInit() {
 
   cal_t stored_cal;
   if (readCalibration(stored_cal)) {
+    stored_calibration_used = true;
     magnetometer_accelerometer.m_min = (LSM303::vector<int16_t>)
       { stored_cal.data.x_min, stored_cal.data.y_min, stored_cal.data.z_min };
     magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>)
