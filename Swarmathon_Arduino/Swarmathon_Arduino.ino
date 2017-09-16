@@ -101,6 +101,7 @@ bool stored_calibration_used = false;
 
 void commitCalibration();
 void clearCalibration();
+void clearObservedCalibration();
 bool readCalibration(cal_t &cal);
 
 /////////////
@@ -256,6 +257,10 @@ void parse() {
     // Clear the EEPROM calibration.
     clearCalibration();
   }
+  else if (rxBuffer == "M") {
+    // Clear the in-memory min/max.
+    clearObservedCalibration();
+  }
   else if (rxBuffer == "P") {
     // Print the current measured and stored calibration for debugging.
     Serial.println("Runtime calibration:");
@@ -303,6 +308,15 @@ void clearCalibration() {
   for (int i=0; i<sizeof(cal_t); i++) {
     EEPROM.write(i, 0xff);
   }
+}
+
+void clearObservedCalibration() {
+  calibration.data.x_min = INT16_MAX;
+  calibration.data.x_max = INT16_MIN;
+  calibration.data.y_min = INT16_MAX;
+  calibration.data.y_max = INT16_MIN;
+  calibration.data.z_min = INT16_MAX;
+  calibration.data.z_max = INT16_MIN;
 }
 
 void commitCalibration() {
