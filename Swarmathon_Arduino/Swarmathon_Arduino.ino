@@ -39,6 +39,8 @@ byte leftDirectionA = A5; //"clockwise" input
 byte leftDirectionB = A4; //"counterclockwise" input
 byte leftSpeedPin = 10; //PWM input
 
+// Modify before merge
+
 //Odometry (8400 CPR Encoder)
 byte rightEncoderA = 7;
 byte rightEncoderB = 8;
