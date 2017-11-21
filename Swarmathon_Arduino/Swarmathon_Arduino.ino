@@ -14,6 +14,10 @@
 #include <Odometry.h>
 #include <Servo.h>
 
+//Needed for calibration
+#include <Wire.h>
+#include <LSM303.h>
+
 // Constants
 #define PI 3.14159265358979323846
 #define RAD2DEG(radianAngle) (radianAngle * 180.0 / PI)
@@ -22,6 +26,17 @@
 ////////////////
 ////Settings////
 ////////////////
+
+//Needed for IMU calibration
+//Default IMU min values
+int min_x = -2247;
+int min_y = -2068;
+int min_z = -1114;
+
+//Default MIN max values
+int max_x = 3369;
+int max_y = 2877;
+int max_z = 3634;
 
 //Gripper (HS-485HB Servo)
 byte fingersPin = 9;
@@ -59,6 +74,11 @@ unsigned long lastCommTime = 0; //time of last communication from NUC (in ms)
 byte leftSignal = 4;
 byte centerSignal = 5;
 byte rightSignal = 6;
+
+//Calibration
+LSM303 compass;
+LSM303::vector<int16_t> running_min = {32767, 32767, 32767}, running_max = {-32768, -32768, -32768};
+char report[80];
 
 
 ////////////////////////////
@@ -222,6 +242,12 @@ void parse() {
     angle = wristMin + (wristMax/370) * angle;
     wrist.writeMicroseconds(angle);
   }
+  //Calibrate is being called from abridge
+  else if (rxBuffer == "CAL") {
+    //Call the calibrate function
+    Serial.println("GOING TO CALIBRATE");
+    calibrate();
+  }
 }
 
 
@@ -301,8 +327,8 @@ void imuInit() {
 
   magnetometer_accelerometer.init();
   magnetometer_accelerometer.enableDefault();
-  magnetometer_accelerometer.m_min = (LSM303::vector<int16_t>){ -2247,  -2068,  -1114};
-  magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>){+3369,  +2877,  +3634};
+  magnetometer_accelerometer.m_min = (LSM303::vector<int16_t>){min_x,  min_y,  min_z};
+  magnetometer_accelerometer.m_max = (LSM303::vector<int16_t>){max_x,  max_y,  max_z};
   magnetometer_accelerometer.setTimeout(1);
 
   pressure.init();
@@ -333,4 +359,42 @@ bool imuStatus() {
   else {
     return false;
   }
+}
+
+
+////////////////////////////
+/////////Calibrate/////////
+////////////////////////////
+
+void calibrate() 
+{
+  Serial.println("inside calibrate function");
+  calibrateSetup();
+  calibrateLoop();
+}
+
+void calibrateSetup() {
+  Serial.begin(9600);
+  Wire.begin();
+  compass.init();
+  compass.enableDefault();
+}
+
+void calibrateLoop() {  
+  compass.read();
+  
+  running_min.x = min(running_min.x, compass.m.x);
+  running_min.y = min(running_min.y, compass.m.y);
+  running_min.z = min(running_min.z, compass.m.z);
+
+  running_max.x = max(running_max.x, compass.m.x);
+  running_max.y = max(running_max.y, compass.m.y);
+  running_max.z = max(running_max.z, compass.m.z);
+  
+  snprintf(report, sizeof(report), "min: {%+6d, %+6d, %+6d}    max: {%+6d, %+6d, %+6d}",
+    running_min.x, running_min.y, running_min.z,
+    running_max.x, running_max.y, running_max.z);
+  Serial.println(report);
+  
+  delay(100);
 }
