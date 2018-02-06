@@ -17,7 +17,7 @@ byte _leftEncoderBPin;
 /**
  *	Constructor arg are pins for channels A and B on right and left encoders
  **/
-Odometry::Odometry(byte rightEncoderAPin, byte rightEncoderBPin, byte leftEncoderAPin, byte leftEncoderBPin, float wheelBase, float wheelDiameter, int cpr) {
+Odometry::Odometry(byte rightEncoderAPin, byte rightEncoderBPin, byte leftEncoderAPin, byte leftEncoderBPin) {
     pinMode(rightEncoderAPin, INPUT);
     pinMode(rightEncoderBPin, INPUT);
     pinMode(leftEncoderAPin, INPUT);
@@ -33,39 +33,20 @@ Odometry::Odometry(byte rightEncoderAPin, byte rightEncoderBPin, byte leftEncode
     _rightEncoderBPin = rightEncoderBPin;
     _leftEncoderAPin = leftEncoderAPin;
     _leftEncoderBPin = leftEncoderBPin;
-    _wheelBase = wheelBase;
-    _wheelDiameter = wheelDiameter;
-    _cpr = cpr;
-    
-    theta = 0;
+    right = 0;
+    left = 0;
     clock = millis();
 }
 
 void Odometry::update() {
-    //Calculate linear distance that each wheel has traveled
-    float rightWheelDistance = ((float)rightEncoderCounter / _cpr) * _wheelDiameter * PI;
-    float leftWheelDistance = ((float)leftEncoderCounter / _cpr) * _wheelDiameter * PI;
-    
-    //Calculate relative angle that robot has turned
-    float dtheta = (rightWheelDistance - leftWheelDistance) / _wheelBase;
-    //Calculate angular velocity
-    vtheta = dtheta / (millis() - clock) * 1000;
-    //Accumulate angles to calculate absolute heading
-    theta += dtheta;
-    
-    //Decompose linear distance into its component values
-    float meanWheelDistance = (rightWheelDistance + leftWheelDistance) / 2;
-    x = meanWheelDistance * cos(dtheta);
-    y = meanWheelDistance * sin(dtheta);
-    //Calculate linear velocity
-    vx = x / (millis() - clock) * 1000;
-    vy = y / (millis() - clock) * 1000;
-    
-    //Reset counters
-    rightEncoderCounter = 0;
+    // Record ticks.
+    left = leftEncoderCounter;
+    right = rightEncoderCounter;
+
     leftEncoderCounter = 0;
+    rightEncoderCounter = 0;
     
-    //Reset clock
+    // Store timestamp
     clock = millis();
 }
 
